@@ -6,13 +6,32 @@
 /*   By: mgering <mgering@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 15:39:01 by mgering           #+#    #+#             */
-/*   Updated: 2024/07/16 19:01:11 by mgering          ###   ########.fr       */
+/*   Updated: 2024/08/13 14:44:49 by mgering          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int	get_height(char *fdf_file)
+int	get_width(char *line)
+{
+	int		width;
+	char	**split_line;
+
+	width = 0;
+	split_line = ft_split(line, ' ');
+	if (split_line)
+	{
+		while (split_line[width])
+		{
+			free(split_line[width]);
+			width++;
+		}
+		free(split_line);
+	}
+	return (width);
+}
+
+void	get_height_width(t_fdf *data, char *fdf_file)
 {
 	char	*line;
 	int		height;
@@ -21,6 +40,7 @@ int	get_height(char *fdf_file)
 	height = 0;
 	fd = open(fdf_file, O_RDONLY);
 	line = get_next_line(fd);
+	data->width = get_width(line);
 	while (line)
 	{
 		free(line);
@@ -28,60 +48,39 @@ int	get_height(char *fdf_file)
 		height++;
 	}
 	close(fd);
-	return (height);
+	data->height = height;
 }
 
-int	get_width(char *fdf_file)
-{
-	int		width;
-	int		fd;
-	char	*line;
-	char	**split_line;
-
-	width = 0;
-	fd = open(fdf_file, O_RDONLY);
-	line = get_next_line(fd);
-	split_line = ft_split(line, ' ');
-	while (split_line[width])
-	{
-		free(split_line[width]);
-		width++;
-	}
-	free(split_line);
-	free(line);
-	close(fd);
-	return (width);
-}
-
-void	write_data_map(int	*altitude, char *line)
+void	fill_data_row(int	*altitude, char *line)
 {
 	int		i;
+	int		val;
 	char	**values;
 
 	i = 0;
 	values = ft_split(line, ' ');
-	while(values[i])
+	while (values[i])
 	{
-		altitude[i] = ft_atoi(values[i]);
+		val = ft_atoi(values[i]);
+		altitude[i] = val;
 		free(values[i]);
 		i++;
 	}
 	free(values);
 }
 
-void	fill_map_data(char *fdf_file, t_fdf *map_data)
+void	fill_map_data(char *fdf_file, t_fdf *data)
 {
 	int		i;
 	int		fd;
 	char	*line;
 
 	i = 0;
-	map_data->height = get_height(fdf_file);
-	map_data->width = get_width(fdf_file);
-	map_data->map = (int **)malloc(sizeof(int *) * (map_data->height + 1));
-	while (i < map_data->height)
+	get_height_width(data, fdf_file);
+	data->map = (int **)malloc(sizeof(int *) * (data->height + 1));
+	while (i < data->height)
 	{
-		map_data->map[i] = (int *)malloc(sizeof(int) * (map_data->width + 1));
+		data->map[i] = (int *)malloc(sizeof(int) * (data->width + 1));
 		i++;
 	}
 	i = 0;
@@ -89,52 +88,12 @@ void	fill_map_data(char *fdf_file, t_fdf *map_data)
 	line = get_next_line(fd);
 	while (line)
 	{
-		write_data_map(map_data->map[i], line);
+		fill_data_row(data->map[i], line);
 		free(line);
 		i++;
 		line = get_next_line(fd);
 	}
-	map_data->map[i] = NULL;
+	data->map[i] = NULL;
 	free(line);
 	close(fd);
 }
-
-/* 
-#include <stdio.h>
-
-int	main(void)
-{
-	t_fdf	*data;
-	int		i;
-	int		j;
-
-	data = (t_fdf*)malloc(sizeof(t_fdf));
-	if (!data)
-		return (1);
-	i = 0;
-	j = 0;
-	fill_map_data("test.fdf", data);
-	while (i < data->height)
-	{
-		j = 0;
-		while (j < data->width)
-		{
-			printf("%3d", data->map[i][j]);
-			j++;
-		}
-		i++;
-		printf("\n");
-	}
-	printf("%d", data->width);
-	//system("leaks fdf");
-	// Free each row of the map
-	for (i = 0; i < data->height; i++)
-	{
-		free(data->map[i]);
-	}
-	// Free the map array pointer
-	free(data->map);
-	// Free the data structure
-	free(data);
-	return (0);
-} */

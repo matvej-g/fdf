@@ -6,7 +6,7 @@
 /*   By: mgering <mgering@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 15:53:39 by mgering           #+#    #+#             */
-/*   Updated: 2024/04/19 16:15:56 by mgering          ###   ########.fr       */
+/*   Updated: 2024/08/02 13:23:37 by mgering          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*gnl_strchr(char *s, int c)
 {
-	while (*s != '\0')
+	while ('\0' != *s)
 	{
 		if ((unsigned char)*s == (unsigned char)c)
 			return ((char *)s);
@@ -32,18 +32,16 @@ char	*gnl_strjoin(char *s1, char *s2)
 	size_t	j;
 
 	i = 0;
-	if (!s1 && !s2)
-		return (NULL);
-	str = ft_calloc((ft_strlen(s1) + ft_strlen(s2) + 1), sizeof(char));
+	str = gnl_calloc((gnl_strlen(s1) + gnl_strlen(s2) + 1), sizeof(char));
 	if (!str)
 		return (free(s1), NULL);
-	while (s1 && s1[i] != '\0')
+	while (s1 && '\0' != s1[i])
 	{
 		str[i] = s1[i];
 		i++;
 	}
 	j = 0;
-	while (s2 && s2[j] != '\0')
+	while (s2 && '\0' != s2[j])
 	{
 		str[i + j] = s2[j];
 		j++;
@@ -61,7 +59,7 @@ size_t	gnl_strlen(char *s)
 	i = 0;
 	if (!s)
 		return (0);
-	while (s[i] != '\0')
+	while ('\0' != s[i])
 	{
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: mgering <mgering@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 14:11:45 by mgering           #+#    #+#             */
-/*   Updated: 2024/04/20 14:40:29 by mgering          ###   ########.fr       */
+/*   Updated: 2024/08/13 14:40:17 by mgering          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ char	**ft_split(char const *s, char c)
 	size_t	word_count;
 	char	**split;
 
+	if (!s)
+		return (NULL);
 	word_count = word_counter(s, c);
 	split = malloc((word_count) * sizeof(char *) + sizeof(void *));
 	if (!split)

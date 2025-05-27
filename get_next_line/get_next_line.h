@@ -6,7 +6,7 @@
 /*   By: mgering <mgering@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 12:46:12 by mgering           #+#    #+#             */
-/*   Updated: 2024/04/19 16:15:36 by mgering          ###   ########.fr       */
+/*   Updated: 2024/08/02 14:26:19 by mgering          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10
+#  define BUFFER_SIZE 100
 # endif
 
 # include <fcntl.h>		//for open
 # include <stdlib.h>	//for malloc
 # include <unistd.h>	//for read
-# include <stdio.h>		//for printf
+# include <stdio.h>		//for printf and FOPEN_MAX
 
 char	*get_next_line(int fd);
 char	*read_line(int fd, char *buffer);

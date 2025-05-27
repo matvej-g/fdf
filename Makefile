@@ -1,16 +1,15 @@
 NAME	:= fdf
 CC		:= cc
 CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code
-DFLAGS	:= -g
+#DFLAGS	:= -fsanitize=address -g
 LIBMLX	:= ./libs/MLX42
-LIBPRINTF := ./ft_printf
 LIBLIBFT := ./libft
-HEADERS	:= -I $(LIBMLX)/include/MLX42 -I $(LIBPRINTF) -I ./get_next_line
-LIBS	:= $(LIBLIBFT)/libft.a $(LIBPRINTF)/libftprintf.a $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
+HEADERS	:= -I $(LIBMLX)/include/MLX42 -I ./get_next_line
+LIBS	:= $(LIBLIBFT)/libft.a $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
 
-#SRCS		:= get_map_data.c ./get_next_line/get_next_line.c ./get_next_line/get_next_line_utils.c
-
-SRCS	:= draw_line_test.c
+SRCS	:= \
+	./get_next_line/get_next_line.c ./get_next_line/get_next_line_utils.c \
+	fdf.c get_map_data.c map_utils.c draw_line_algo.c draw_utils.c error.c
 
 OBJS	:= ${SRCS:.c=.o}
 
@@ -29,27 +28,23 @@ libmlx:
 
 $(NAME): $(OBJS)
 	$(MAKE) -C $(LIBLIBFT)
-	$(MAKE) -C $(LIBPRINTF)
 	$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME)
 
 clean:
-	$(MAKE) -C $(LIBPRINTF) clean
 	$(MAKE) -C $(LIBLIBFT) clean
 	@rm -rf $(OBJS)
 
 fclean: clean
-	$(MAKE) -C $(LIBPRINTF) fclean
 	$(MAKE) -C $(LIBLIBFT) fclean
 	@rm -rf libs
 	@rm -rf $(NAME)
 
-deb : CFLAGS += $(DFLAGS)
-deb : clean $(OBJS)
-	$(MAKE) -C $(LIBLIBFT)
-	$(MAKE) -C $(LIBPRINTF)
-	$(CC) $(OBJS) $(LIBS) $(HEADERS) -o deb
-	@printf "debug version ready.\n"
+# deb : CFLAGS += $(DFLAGS)
+# deb : clean $(OBJS)
+# 	$(MAKE) -C $(LIBLIBFT)
+# 	$(CC) $(OBJS) $(LIBS) $(HEADERS) $(DFLAGS) -o deb
+# 	@printf "debug version ready.\n"
 
 re: clean all
 
-.PHONY: all, clean, fclean, re, libmlx, deb
+.PHONY: all, clean, fclean, re, libmlx

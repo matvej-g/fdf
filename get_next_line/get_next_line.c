@@ -6,7 +6,7 @@
 /*   By: mgering <mgering@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 15:53:30 by mgering           #+#    #+#             */
-/*   Updated: 2024/03/12 15:31:39 by mgering          ###   ########.fr       */
+/*   Updated: 2024/08/02 13:23:38 by mgering          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*get_next_line(int fd)
 	if (!buffer)
 		return (NULL);
 	line = cut_line(buffer);
-	if (!line || line[0] == '\0')
+	if (!line || '\0' == line[0])
 	{
 		if (buffer)
 		{
@@ -34,7 +34,7 @@ char	*get_next_line(int fd)
 			free(line);
 		return (NULL);
 	}
-	buffer = buffer_left(buffer, ft_strlen(line));
+	buffer = buffer_left(buffer, gnl_strlen(line));
 	return (line);
 }
 
@@ -44,20 +44,22 @@ char	*read_line(int fd, char *buffer)
 	ssize_t	bytes_read;
 
 	bytes_read = 1;
-	temp_buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	temp_buffer = gnl_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!temp_buffer)
 	{
 		if (buffer)
 			free(buffer);
 		return (NULL);
 	}
-	while (0 < bytes_read && !ft_strchr(temp_buffer, '\n'))
+	while (0 < bytes_read && !gnl_strchr(temp_buffer, '\n'))
 	{
 		bytes_read = read(fd, temp_buffer, BUFFER_SIZE);
 		if (0 > bytes_read)
 			return (free(temp_buffer), free(buffer), NULL);
 		temp_buffer[bytes_read] = '\0';
-		buffer = ft_strjoin(buffer, temp_buffer);
+		buffer = gnl_strjoin(buffer, temp_buffer);
+		if (!buffer)
+			return (free(temp_buffer), NULL);
 	}
 	if (temp_buffer)
 		free(temp_buffer);
@@ -76,9 +78,9 @@ char	*cut_line(char *buffer)
 	i = 0;
 	while (buffer[line_length] && '\n' != buffer[line_length])
 		line_length++;
-	if (buffer[line_length] == '\n')
+	if ('\n' == buffer[line_length])
 		line_length++;
-	line = ft_calloc((line_length + 1), sizeof(char));
+	line = gnl_calloc((line_length + 1), sizeof(char));
 	if (!line)
 		return (NULL);
 	while (i < line_length)
@@ -98,17 +100,15 @@ char	*buffer_left(char *buffer, size_t line_length)
 
 	if (!buffer)
 		return (NULL);
-	temp_length = ft_strlen(buffer);
+	temp_length = gnl_strlen(buffer);
 	i = 0;
-	if ((temp_length - line_length) < 1)
-		return (free(buffer), NULL);
-	temp = ft_calloc((temp_length - line_length + 1), sizeof(char));
+	temp = gnl_calloc((temp_length - line_length + 1), sizeof(char));
 	if (!temp)
 	{
 		free(buffer);
 		return (NULL);
 	}
-	while (buffer[line_length] != '\0')
+	while ('\0' != buffer[line_length])
 	{
 		temp[i] = buffer[line_length];
 		i++;
@@ -119,3 +119,17 @@ char	*buffer_left(char *buffer, size_t line_length)
 	return (temp);
 }
 
+/* int	main(void)
+{
+	int		fd;
+	char	*line;
+
+	fd = open("test.txt", O_RDONLY);
+	while ((line = get_next_line(fd)))
+	{
+		printf("-->%s", line);
+		free(line);
+	}
+	close(fd);
+	return(0);
+} */

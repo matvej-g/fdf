@@ -1,6 +1,6 @@
 # fdf "Fil de Fer"
 
-[![License](https://img.shields.io/badge/license-Unlicense-blue)](/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A Norm-compliant C implementation of the FDF wireframe model renderer, parsing 3D height-map data and projecting it into a 2D isometric view.
 
